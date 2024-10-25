@@ -46,9 +46,15 @@ async function getOllamaResponse(message, retries = 3) {
             if (jsonMatch && jsonMatch[1]) {
                 const validJson = jsonMatch[1];
                 const parsedResponse = JSON.parse(validJson);
-                if (Object.keys(parsedResponse).length > 0) {
-                    return parsedResponse;
+                console.log('Backend parsed response:', JSON.stringify(parsedResponse, null, 2));
+                
+                // Check if the response is too short or missing key elements
+                if (!parsedResponse.key_skills || !parsedResponse.essential_projects || !parsedResponse.technologies_to_learn_in_order) {
+                    console.log('Response too short or missing elements, retrying...');
+                    continue;
                 }
+                
+                return parsedResponse;
             }
         } catch (error) {
             console.error(`Attempt ${i + 1} failed:`, error);
@@ -60,32 +66,32 @@ async function getOllamaResponse(message, retries = 3) {
 app.post('/api/recommend', async (req, res) => {
     let { educationLevel, currentRole, desiredRole, userSkills } = req.body;
 
-    currentRole = currentRole || "fresher";
+    currentRole = currentRole || "fresher"; // Set default to "fresher"
 
     const message = {
         role: 'user',
-        content: `Generate a short and structured JSON response with key skills and technologies for education level of ${educationLevel} and transitioning from ${currentRole} to ${desiredRole} based on the following skills: ${JSON.stringify(userSkills)}. Respond only in the following JSON format: {
+        content: `Generate a comprehensive and structured JSON response detailing the key skills and technologies required for an education level of ${educationLevel} while transitioning from ${currentRole} to ${desiredRole}. 
+        Take into account the following skills: ${JSON.stringify(userSkills)}. 
+
+        The response should only be in the specified JSON format:
+        {
             "current_role": "${currentRole}",
             "desired_role": "${desiredRole}",
-            "key_skills": ["<skill_1>", "<skill_2>", "..."],
-            "essential_projects": ["<project_1>", "<project_2>", "..."],
+            "key_skills": ["<skill_1>", "<skill_2>", ...],
+            "essential_projects": ["<project_1>", "<project_2>", ...],
             "technologies_to_learn_in_order": [
-                {
-                    "name": "<technology_1>",
-                    "description": "<brief description and tips for learning based on ${educationLevel} level>"
-                },
-                {
-                    "name": "<technology_2>",
-                    "description": "<brief description and tips for learning based on ${educationLevel} level>"
-                },
+                {"name": "<technology_1>", "description": "<brief description and tips for learning based on ${educationLevel} level>"},
+                {"name": "<technology_2>", "description": "<brief description and tips for learning based on ${educationLevel} level>"},
                 ...
-            ] (up to however many technologies needed)
-        }`
+            ]
+        }
+
+        Please ensure that the descriptions provided are actionable and tailored to the specified education level, including any necessary prerequisites or resources that might be helpful for someone at that level.`
     };
 
     try {
         const parsedResponse = await getOllamaResponse(message);
-        console.log('Parsed response:', JSON.stringify(parsedResponse, null, 2));
+        console.log('Backend sending response:', JSON.stringify(parsedResponse, null, 2));
         res.json(parsedResponse);
     } catch (error) {
         console.error('Error in /api/recommend:', error);
