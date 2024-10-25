@@ -6,7 +6,7 @@
 <style>
     .title {
     font-family: 'Inter', sans-serif;
-    font-size: 6rem;  
+    font-size: 8rem;  
     margin-bottom: 20px;
     color: black;
     grid-column: auto;

@@ -4,13 +4,14 @@
 
 <style>
   .circle {
-    width: 50px;
-    height: 50px;
+    width: 10rem;
+    height: 10rem;
     border-radius: 50%;
     overflow: hidden;
-    position: absolute;
+    /* position: absolute;
     top: 20px;
-    right: 20px;
+    right: 20px; */
+    background-color: #D9D9D9;
   }
   .circle img {
     width: 100%;
@@ -20,5 +21,5 @@
 </style>
 
 <div class="circle">
-  <img src={userImageUrl} alt="User Image" />
+  <!-- <img src={userImageUrl} alt="User Image" /> -->
 </div>
