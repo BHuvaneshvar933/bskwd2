@@ -156,8 +156,7 @@
 				<div class="roadmap">
 					{#each response.technologies_to_learn_in_order as tech, index}
 						<div class="roadmap-item">
-							<strong>{tech.name}</strong>
-							<p>{tech.description}</p>
+							<strong>{tech}</strong>
 						</div>
 						{#if index < response.technologies_to_learn_in_order.length - 1}
 							<div class="arrow">↓</div>
@@ -283,8 +282,27 @@
 
 	.roadmap-item {
 		background-color: #f0f0f0;
-		padding: 1rem;
 		border-radius: 8px;
+		padding: 1rem;
 		margin-bottom: 1rem;
+		width: 100%;
+		max-width: 400px;
+	}
+
+	.roadmap-item strong {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 1.1rem;
+	}
+
+	.roadmap-item p {
+		margin: 0;
+		font-size: 0.9rem;
+	}
+
+	.arrow {
+		font-size: 1.5rem;
+		color: #007bff;
+		margin: 0.5rem 0;
 	}
 </style>
